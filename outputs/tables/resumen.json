@@ -1,0 +1,58 @@
+{
+  "registros_originales": 16598,
+  "registros_finales": 16595,
+  "k_final": 4,
+  "variables_modelo": [
+    "log_ventas",
+    "pct_NA",
+    "pct_EU",
+    "pct_JP"
+  ],
+  "silueta": 0.4414,
+  "davies_bouldin": 0.8177,
+  "calinski_harabasz": 16895.4,
+  "inercia": 16369.8,
+  "varianza_pca": [
+    0.4694,
+    0.3041
+  ],
+  "estabilidad_ari_media": 0.9993,
+  "nombres_clusters": {
+    "3": "Éxitos occidentales",
+    "0": "Nicho norteamericano",
+    "1": "Nicho europeo",
+    "2": "Nicho japonés"
+  },
+  "limpieza": {
+    "registros_originales": 16598,
+    "year_nulos": 271,
+    "publisher_nulos": 58,
+    "duplicados_exactos": 0,
+    "duplicados_logicos_eliminados": 2,
+    "max_diferencia_suma_regional": 0.02,
+    "sin_ventas_regionales_eliminados": 1,
+    "atipicos_iqr_ventas": 1893,
+    "atipicos_iqr_log": 60,
+    "registros_finales": 16595,
+    "nulos_finales": 0
+  },
+  "hallazgos": [
+    "Concentración: los 'Éxitos occidentales' son solo 34.2% de los juegos, pero generan 79.9% de las unidades vendidas (mediana de 0.62 M por juego).",
+    "Mercado japonés separado: 3,689 juegos venden en promedio 97% en Japón; los géneros Role-Playing y Adventure representan 36% de este grupo frente a 17% en todo el catálogo.",
+    "Europa y PC: el 'Nicho europeo' (1,531 juegos) concentra 81% de sus ventas en Europa y 47% de sus juegos son de PC, frente a 6% de PC en el catálogo completo.",
+    "Nintendo: 63% de los juegos de Nintendo cae en 'Éxitos occidentales', contra 34% del catálogo total."
+  ],
+  "recomendaciones": [
+    "Priorizar el presupuesto de lanzamiento en los títulos con perfil de 'Éxitos occidentales' (ventas altas repartidas entre Norteamérica y Europa), porque poco más de un tercio de los juegos (34%) explica cerca de 80% de las unidades vendidas.",
+    "Para el mercado japonés, planear lanzamientos específicos (géneros de rol y aventura; PSP y DS destacan entre las plataformas del grupo) en lugar de esperar que un título occidental se venda igual allá.",
+    "Para Europa, considerar PC como plataforma prioritaria en juegos de menor escala, porque casi la mitad del grupo europeo son juegos de PC.",
+    "Usar el clúster de un juego similar como referencia al estimar expectativas de ventas por región antes de un lanzamiento."
+  ],
+  "limitaciones": [
+    "Son estimaciones de ventas que llegan hasta 2016: no incluyen juegos recientes y el dataset no distingue entre ventas físicas y digitales.",
+    "Las ventas están redondeadas a 0.01 M: en juegos con ventas muy bajas, las proporciones regionales son burdas (un juego con 0.02 M puede aparecer con 100% en una sola región), lo que refuerza los 'nichos'.",
+    "La silueta del modelo final es moderada (0.44); los grupos se traslapan en sus fronteras, sobre todo entre 'Éxitos occidentales' y los nichos norteamericano y europeo.",
+    "K-Means asume grupos compactos y de forma aproximadamente esférica, y asigna cada juego a un solo grupo sin indicar qué tan claro es el caso.",
+    "No hay variables de calidad, presupuesto, marketing o calificaciones; solo ventas."
+  ]
+}

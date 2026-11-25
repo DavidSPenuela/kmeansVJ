@@ -1,0 +1,241 @@
+
+================================================================================
+PARTE 2. EXPLORACIÓN DEL DATASET
+================================================================================
+Primeros 10 registros:
+   Rank                       Name Platform    Year         Genre Publisher  NA_Sales  EU_Sales  JP_Sales  Other_Sales  Global_Sales
+0     1                 Wii Sports      Wii  2006.0        Sports  Nintendo     41.49     29.02      3.77         8.46         82.74
+1     2          Super Mario Bros.      NES  1985.0      Platform  Nintendo     29.08      3.58      6.81         0.77         40.24
+2     3             Mario Kart Wii      Wii  2008.0        Racing  Nintendo     15.85     12.88      3.79         3.31         35.82
+3     4          Wii Sports Resort      Wii  2009.0        Sports  Nintendo     15.75     11.01      3.28         2.96         33.00
+4     5   Pokemon Red/Pokemon Blue       GB  1996.0  Role-Playing  Nintendo     11.27      8.89     10.22         1.00         31.37
+5     6                     Tetris       GB  1989.0        Puzzle  Nintendo     23.20      2.26      4.22         0.58         30.26
+6     7      New Super Mario Bros.       DS  2006.0      Platform  Nintendo     11.38      9.23      6.50         2.90         30.01
+7     8                   Wii Play      Wii  2006.0          Misc  Nintendo     14.03      9.20      2.93         2.85         29.02
+8     9  New Super Mario Bros. Wii      Wii  2009.0      Platform  Nintendo     14.59      7.06      4.70         2.26         28.62
+9    10                  Duck Hunt      NES  1984.0       Shooter  Nintendo     26.93      0.63      0.28         0.47         28.31
+
+Dimensiones: 16598 filas x 11 columnas
+
+Columnas y tipos de datos:
+Rank              int64
+Name                str
+Platform            str
+Year            float64
+Genre               str
+Publisher           str
+NA_Sales        float64
+EU_Sales        float64
+JP_Sales        float64
+Other_Sales     float64
+Global_Sales    float64
+
+Estadísticas descriptivas (numéricas):
+            Rank       Year   NA_Sales   EU_Sales   JP_Sales  Other_Sales  Global_Sales
+count  16598.000  16327.000  16598.000  16598.000  16598.000    16598.000     16598.000
+mean    8300.605   2006.406      0.265      0.147      0.078        0.048         0.537
+std     4791.854      5.829      0.817      0.505      0.309        0.189         1.555
+min        1.000   1980.000      0.000      0.000      0.000        0.000         0.010
+25%     4151.250   2003.000      0.000      0.000      0.000        0.000         0.060
+50%     8300.500   2007.000      0.080      0.020      0.000        0.010         0.170
+75%    12449.750   2010.000      0.240      0.110      0.040        0.040         0.470
+max    16600.000   2020.000     41.490     29.020     10.220       10.570        82.740
+
+Estadísticas descriptivas (categóricas):
+                               Name Platform   Genre        Publisher
+count                         16598    16598   16598            16540
+unique                        11493       31      12              578
+top     Need for Speed: Most Wanted       DS  Action  Electronic Arts
+freq                             12     2163    3316             1351
+
+Valores nulos por columna:
+Rank              0
+Name              0
+Platform          0
+Year            271
+Genre             0
+Publisher        58
+NA_Sales          0
+EU_Sales          0
+JP_Sales          0
+Other_Sales       0
+Global_Sales      0
+
+Registros duplicados exactos: 0
+Gráficas exploratorias guardadas en outputs/figures (01 a 05).
+
+================================================================================
+PARTE 3. LIMPIEZA Y PREPARACIÓN
+================================================================================
+Registros con mismo Name + Platform + Year (duplicados lógicos):
+        Rank                         Name Platform  Year        Publisher  Global_Sales
+603      604                Madden NFL 13      PS3  2012  Electronic Arts          2.56
+14997  15000  Wii de Asobu: Metroid Prime      Wii  2009         Nintendo          0.02
+14999  15002  Wii de Asobu: Metroid Prime      Wii  2009         Nintendo          0.02
+16127  16130                Madden NFL 13      PS3  2012  Electronic Arts          0.01
+
+Diferencia máxima entre Global_Sales y la suma regional: 0.020 (por redondeo)
+
+Atípicos por IQR en Global_Sales: 1893 (11.4%) | tras log10: 60
+Decisión: NO se eliminan los atípicos. Son éxitos reales (Wii Sports, Mario Kart...) y justamente son el segmento que interesa identificar. En su lugar se aplica una transformación logarítmica.
+
+Resumen de la limpieza:
+  registros_originales: 16598
+  year_nulos: 271
+  publisher_nulos: 58
+  duplicados_exactos: 0
+  duplicados_logicos_eliminados: 2
+  max_diferencia_suma_regional: 0.02
+  sin_ventas_regionales_eliminados: 1
+  atipicos_iqr_ventas: 1893
+  atipicos_iqr_log: 60
+  registros_finales: 16595
+  nulos_finales: 0
+
+Variables del modelo antes del escalamiento:
+       log_ventas     pct_NA     pct_EU     pct_JP
+count   16595.000  16595.000  16595.000  16595.000
+mean       -0.756      0.462      0.232      0.242
+std         0.635      0.346      0.254      0.402
+min        -2.000      0.000      0.000      0.000
+25%        -1.222      0.000      0.000      0.000
+50%        -0.770      0.500      0.200      0.000
+75%        -0.328      0.750      0.375      0.350
+max         1.918      1.000      1.000      1.000
+
+Variables del modelo después de StandardScaler (media ~0, desviación ~1):
+      log_ventas  pct_NA  pct_EU  pct_JP
+mean      -0.000  -0.000  -0.000  -0.000
+std        1.000   1.000   1.000   1.000
+min       -1.961  -1.334  -0.912  -0.603
+max        4.211   1.556   3.021   1.886
+
+================================================================================
+PARTE 4. K-MEANS
+================================================================================
+Variables usadas en el entrenamiento (4): ['log_ventas', 'pct_NA', 'pct_EU', 'pct_JP']
+
+Métricas por número de clústeres:
+ K   inercia  silueta  davies_bouldin  calinski_harabasz  caida_inercia_pct
+ 2 37653.710    0.498           0.707          12658.921                NaN
+ 3 24763.615    0.497           0.774          13941.809               34.2
+ 4 16369.759    0.441           0.818          16895.380               33.9
+ 5 13530.801    0.412           0.850          16199.815               17.3
+ 6 11548.567    0.384           0.853          15752.692               14.6
+ 7  9636.424    0.385           0.832          16279.832               16.6
+ 8  8479.188    0.380           0.870          16180.953               12.0
+ 9  7676.798    0.376           0.869          15853.832                9.5
+10  6907.218    0.387           0.820          15866.754               10.0
+
+Justificación de K = 4:
+- La silueta es máxima en K = 2 (0.498), pero K = 4 conserva un valor aceptable (0.441).
+- Método del codo: pasar de K = 3 a K = 4 reduce la inercia 33.9%, mientras que pasar a K = 5 solo la reduce 17.3%: el codo está en K = 4.
+- K = 2 solo separa los juegos de mercado japonés del resto, lo que aporta poco para tomar decisiones.
+- Con K = 3 los juegos de ventas altas quedan mezclados con los de nicho norteamericano en un solo grupo de unos 10,900 juegos; K = 4 los separa en un grupo propio.
+
+Centroides (variables escaladas):
+   log_ventas  pct_NA  pct_EU  pct_JP
+0      -0.322   1.026  -0.434  -0.574
+1      -0.850  -1.076   2.282  -0.585
+2      -0.562  -1.294  -0.881   1.811
+3       0.916   0.102   0.391  -0.443
+
+Centroides (unidades originales; ventas_tipicas_M = 10^log_ventas):
+   log_ventas  pct_NA  pct_EU  pct_JP  ventas_tipicas_M
+0      -0.960   0.817   0.122   0.012             0.110
+1      -1.295   0.089   0.812   0.007             0.051
+2      -1.112   0.014   0.008   0.970             0.077
+3      -0.174   0.497   0.331   0.065             0.670
+
+Registros por clúster:
+Cluster
+0    5694
+1    1531
+2    3689
+3    5681
+Nombres asignados: {3: 'Éxitos occidentales', 0: 'Nicho norteamericano', 1: 'Nicho europeo', 2: 'Nicho japonés'}
+Varianza explicada por PCA: PC1 = 46.9%, PC2 = 30.4% (total 77.3%)
+
+================================================================================
+COMPARACIÓN DE CONFIGURACIONES
+================================================================================
+                   configuracion  silueta  davies_bouldin  calinski_harabasz         tamanos_clusters  cluster_mas_pequeno_pct
+ A: log10(ventas) + proporciones    0.441           0.818            16895.4 [5694, 5681, 3689, 1531]                     9.23
+B: ventas sin log + proporciones    0.532           0.690            14621.6   [6905, 5776, 3837, 77]                     0.46
+
+Perfil de la configuración B (ventas medias por clúster):
+            juegos  ventas_media  pct_NA  pct_EU  pct_JP
+_cluster_B                                              
+0               77        16.626   0.480   0.282   0.146
+1             5776         0.685   0.353   0.506   0.030
+2             3837         0.215   0.023   0.012   0.954
+3             6905         0.414   0.796   0.124   0.026
+Concordancia entre A y B (Índice de Rand ajustado): 0.557
+
+Interpretación: la configuración B obtiene una silueta más alta (0.532 vs. 0.441), pero no es mejor: sin el logaritmo, un puñado de superventas domina la escala y K-Means gasta un clúster completo en solo 77 juegos. Los otros tres grupos se separan casi solo por región y dejan de distinguir entre juegos de ventas altas y bajas. Además, la silueta no es comparable entre espacios de variables distintos. Se conserva la configuración A.
+
+Estabilidad (Rand ajustado vs. 10 semillas): media = 0.999, mínimo = 0.998
+
+================================================================================
+PARTE 5. ANÁLISIS DE RESULTADOS
+================================================================================
+Tabla comparativa de los grupos:
+                      juegos  ventas_totales_M  ventas_media_M  ventas_mediana_M  pct_NA  pct_EU  pct_JP  anio_medio  %_juegos  %_ventas
+Cluster_Nombre                                                                                                                          
+Nicho norteamericano    5694            974.36           0.171              0.11   0.817   0.122   0.012    2005.845    34.312    10.923
+Nicho europeo           1531            169.26           0.111              0.04   0.089   0.812   0.007    2009.540     9.226     1.897
+Nicho japonés           3689            649.16           0.176              0.07   0.014   0.008   0.970    2006.424    22.230     7.277
+Éxitos occidentales     5681           7127.62           1.255              0.62   0.497   0.331   0.065    2006.081    34.233    79.902
+
+Nicho norteamericano
+  Géneros: Action (19%), Sports (17%)
+  Plataformas: DS (20%), Wii (13%), XB (11%)
+  Editores: Activision (9%), Electronic Arts (8%)
+
+Nicho europeo
+  Géneros: Action (18%), Sports (13%)
+  Plataformas: PC (47%), DS (9%), PS3 (8%)
+  Editores: Electronic Arts (8%), Ubisoft (8%)
+
+Nicho japonés
+  Géneros: Adventure (18%), Role-Playing (18%)
+  Plataformas: PSP (17%), DS (15%), PS2 (14%)
+  Editores: Namco Bandai Games (16%), Konami Digital Entertainment (9%)
+
+Éxitos occidentales
+  Géneros: Action (23%), Sports (14%)
+  Plataformas: PS2 (23%), PS3 (12%), PS (12%)
+  Editores: Electronic Arts (13%), Activision (8%)
+
+Estadísticas descriptivas por grupo (ventas globales):
+                       count   mean    std   min   25%   50%   75%    max
+Cluster_Nombre                                                           
+Nicho norteamericano  5694.0  0.171  0.183  0.01  0.06  0.11  0.21   1.82
+Nicho europeo         1531.0  0.111  0.206  0.01  0.02  0.04  0.10   2.81
+Nicho japonés         3689.0  0.176  0.324  0.01  0.03  0.07  0.19   4.87
+Éxitos occidentales   5681.0  1.255  2.484  0.07  0.32  0.62  1.32  82.74
+
+HALLAZGOS
+1. Concentración: los 'Éxitos occidentales' son solo 34.2% de los juegos, pero generan 79.9% de las unidades vendidas (mediana de 0.62 M por juego).
+2. Mercado japonés separado: 3,689 juegos venden en promedio 97% en Japón; los géneros Role-Playing y Adventure representan 36% de este grupo frente a 17% en todo el catálogo.
+3. Europa y PC: el 'Nicho europeo' (1,531 juegos) concentra 81% de sus ventas en Europa y 47% de sus juegos son de PC, frente a 6% de PC en el catálogo completo.
+4. Nintendo: 63% de los juegos de Nintendo cae en 'Éxitos occidentales', contra 34% del catálogo total.
+
+RECOMENDACIONES
+1. Priorizar el presupuesto de lanzamiento en los títulos con perfil de 'Éxitos occidentales' (ventas altas repartidas entre Norteamérica y Europa), porque poco más de un tercio de los juegos (34%) explica cerca de 80% de las unidades vendidas.
+2. Para el mercado japonés, planear lanzamientos específicos (géneros de rol y aventura; PSP y DS destacan entre las plataformas del grupo) en lugar de esperar que un título occidental se venda igual allá.
+3. Para Europa, considerar PC como plataforma prioritaria en juegos de menor escala, porque casi la mitad del grupo europeo son juegos de PC.
+4. Usar el clúster de un juego similar como referencia al estimar expectativas de ventas por región antes de un lanzamiento.
+
+LIMITACIONES
+1. Son estimaciones de ventas que llegan hasta 2016: no incluyen juegos recientes y el dataset no distingue entre ventas físicas y digitales.
+2. Las ventas están redondeadas a 0.01 M: en juegos con ventas muy bajas, las proporciones regionales son burdas (un juego con 0.02 M puede aparecer con 100% en una sola región), lo que refuerza los 'nichos'.
+3. La silueta del modelo final es moderada (0.44); los grupos se traslapan en sus fronteras, sobre todo entre 'Éxitos occidentales' y los nichos norteamericano y europeo.
+4. K-Means asume grupos compactos y de forma aproximadamente esférica, y asigna cada juego a un solo grupo sin indicar qué tan claro es el caso.
+5. No hay variables de calidad, presupuesto, marketing o calificaciones; solo ventas.
+
+================================================================================
+EXPORTACIÓN
+================================================================================
+Dataset procesado: data\processed\vgsales_clusters.csv (16,595 filas)
+Tablas en: outputs\tables  |  Figuras en: outputs\figures

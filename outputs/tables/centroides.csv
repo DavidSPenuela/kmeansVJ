@@ -1,0 +1,5 @@
+Cluster,Cluster_Nombre,log_ventas_orig,pct_NA_orig,pct_EU_orig,pct_JP_orig,ventas_tipicas_M_orig,log_ventas_esc,pct_NA_esc,pct_EU_esc,pct_JP_esc
+0,Nicho norteamericano,-0.9597,0.8166,0.1217,0.0118,0.1097,-0.3217,1.0258,-0.4338,-0.574
+1,Nicho europeo,-1.2952,0.0891,0.8122,0.0073,0.0507,-0.8502,-1.0765,2.2821,-0.5852
+2,Nicho japonés,-1.1121,0.0139,0.0081,0.9698,0.0773,-0.5617,-1.2939,-0.8806,1.8106
+3,Éxitos occidentales,-0.1741,0.497,0.3315,0.0645,0.6697,0.916,0.1023,0.3914,-0.4427
